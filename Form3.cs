@@ -13,7 +13,7 @@ namespace depictPicture {
         }
 
         private void github_link_click(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start("https://github.com/WorldMargin2/FuckRedSpider");
+            Process.Start("https://github.com/WorldMargin2/depictPicture");
         }
 
         private void official_link_click(object sender, LinkLabelLinkClickedEventArgs e) {
