@@ -98,7 +98,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyGridBinding.cs" />
     <Compile Include="Form3.cs">
       <SubType>Form</SubType>
     </Compile>

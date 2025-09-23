@@ -228,6 +228,10 @@
             this.keyBindingGrid.RowTemplate.Height = 27;
             this.keyBindingGrid.Size = new System.Drawing.Size(400, 218);
             this.keyBindingGrid.TabIndex = 0;
+            this.keyBindingGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.keyBindingGrid_CellMouseClick);
+            this.keyBindingGrid.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.keyBindingGrid_CellMouseLeave);
+            this.keyBindingGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.keyBindingGrid_CellValueChanged);
+            this.keyBindingGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyBindingGrid_KeyDown);
             // 
             // EventName
             // 

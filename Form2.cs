@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using KeysBinding;
 
 namespace depictPicture {
     public partial class Form2 : Form {
         Form1 main_form;
         public Form2(Form1 main_form) {
             InitializeComponent();
-            keyGridBinding = new KeyGridBinding(keyBindingGrid);
             this.main_form = main_form;
             this.FormClosed += (s, e) => {
                 main_form.Close();
-                keyGridBinding.stopListen();
+                stopListen();
             };
-            keyGridBinding.startListen();
+            startListen();
             bindKey();
+            initGridData();
             setToolTip();
         }
 
@@ -46,7 +45,13 @@ namespace depictPicture {
             toolTip1.SetToolTip(this.opacity_num, "设置窗口透明度 (Ctrl+Up/Down)");
 
         }
-        
+
+        //=======================================================================================
+        //设置钩子
+        private KeyEventHandler keyEventHandler;
+        private KeyboardHook hook = new KeyboardHook();
+        private KeysBinding keyBinding;
+
         //====================================
         void e_change_mouse_penetrate() {
             mouse_penetrate.Checked = !mouse_penetrate.Checked;
@@ -61,10 +66,10 @@ namespace depictPicture {
         }
 
         void e_config_window_show() {
-            if (this.WindowState!=FormWindowState.Minimized) {
-                this.WindowState = FormWindowState.Minimized;
+            if (this.Visible) {
+                this.Hide();
             } else {
-                this.WindowState = FormWindowState.Normal;
+                this.Show();
                 this.Activate();
             }
         }
@@ -127,21 +132,44 @@ namespace depictPicture {
         //====================================
 
         //绑定键组
+        private void bindKey() {
+            keyBinding.registKeyFunction(Keys.Alt, Keys.M, e_change_mouse_penetrate);
+            GridBinding.Add("鼠标穿透", e_change_mouse_penetrate);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.T, e_change_topest);
+            GridBinding.Add("置顶", e_change_topest);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.D, e_drag_window);
+            GridBinding.Add("拖动窗口", e_drag_window);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.S, e_main_window_show);
+            GridBinding.Add("显示/隐藏窗口", e_main_window_show);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.Down, e_opacity_down);
+            GridBinding.Add("降低透明度", e_opacity_down);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.Up, e_opacity_up);
+            GridBinding.Add("提高透明度", e_opacity_up);
+            keyBinding.registKeyFunction(Keys.Alt, Keys.B, e_change_show_mode);
+            GridBinding.Add("切换显示模式", e_change_show_mode);
+            keyBinding.registKeyFunction(Keys.Control, Keys.W, e_config_window_show);
+            GridBinding.Add("显示配置窗口", e_config_window_show);
+        }
 
-        private KeyGridBinding keyGridBinding;
-        private void bindKey(){
-            keyGridBinding.bind("鼠标穿透", e_change_mouse_penetrate, Keys.Alt, Keys.M);
-            keyGridBinding.bind("置顶", e_change_topest, Keys.Alt, Keys.T);
-            keyGridBinding.bind("拖动窗口", e_drag_window, Keys.Alt, Keys.D);
-            keyGridBinding.bind("显示/隐藏窗口", e_main_window_show, Keys.Alt, Keys.S);
-            keyGridBinding.bind("降低透明度", e_opacity_down, Keys.Alt, Keys.Down);
-            keyGridBinding.bind("提高透明度", e_opacity_up, Keys.Alt, Keys.Up);
-            keyGridBinding.bind("切换显示模式", e_change_show_mode, Keys.Alt, Keys.N);
-            keyGridBinding.bind("显示配置窗口", e_config_window_show, Keys.Control, Keys.B);
-            keyGridBinding.initGridData();
+        private void handleKey(object sender, KeyEventArgs e) {
+            keyBinding.handleKeyFunction(Control.ModifierKeys, e.KeyCode);
         }
 
 
+        private void startListen() {
+            this.keyBinding = new KeysBinding();
+            keyEventHandler = new KeyEventHandler(handleKey);
+            hook.KeyDownEvent += keyEventHandler;
+            hook.Start();
+        }
+
+        private void stopListen() {
+            if (keyEventHandler != null) {
+                hook.KeyDownEvent -= keyEventHandler;
+                keyEventHandler = null;
+                hook.Stop();
+            }
+        }
 
 
 
@@ -203,10 +231,10 @@ namespace depictPicture {
 
         private void show_window_CheckedChanged(object sender, EventArgs e) {
             if (this.show_window.Checked) {
-                this.main_form.WindowState = FormWindowState.Normal;
+                this.main_form.Show();
                 topest.Checked = true;
             } else {
-                this.main_form.WindowState = FormWindowState.Minimized;
+                this.main_form.Hide();
             }
         }
 
@@ -215,6 +243,87 @@ namespace depictPicture {
         //===========================表格绑定========================================================
 
 
+        Dictionary<string, Action> GridBinding = new Dictionary<string, Action>();
+        bool is_user_changed = false;
+
+
+        void initGridData() {
+            foreach (var e in GridBinding) {
+                var tmp = keyBinding.getKey(e.Value);
+                string modifier =
+                    tmp.modifier == Keys.Shift ? "Shift" :
+                    tmp.modifier == Keys.Control ? "Ctrl" :
+                    tmp.modifier == Keys.Alt ? "Alt" : "None"
+                ;
+                string key = KeysBinding.reverseKeyNames[tmp.key];
+                int index = keyBindingGrid.Rows.Add(e.Key, modifier, key);
+            }
+        }
+
+
+
+        private void keyBindingGrid_KeyDown(object sender, KeyEventArgs e) {
+            is_user_changed = false;
+            e.Handled = true;//阻止事件传递
+            if (keyBindingGrid.CurrentCell.ColumnIndex != 2) return;//判断是否为副键列
+            if (Control.ModifierKeys == Keys.Alt || Control.ModifierKeys == Keys.Control || Control.ModifierKeys == Keys.Shift) {
+
+                return;//这些应该在主键设置
+            }
+
+            string name = keyBindingGrid.CurrentRow.Cells[0].Value.ToString();//获取行头
+            Action action = GridBinding[name];//通过行头获取绑定的事件函数
+            var tmp = keyBinding.getKey(action);//获取原键组
+            if (e.KeyCode == tmp.key) return;//判断是否和原键组相同
+
+            string err = keyBinding.getError(keyBinding.registKeyFunction(tmp.modifier, e.KeyCode, action));//获取错误信息
+            if (err != "") {
+                MessageBox.Show(err);//显示错误信息
+                return;
+            }
+
+            keyBindingGrid.CurrentCell.Value = KeysBinding.reverseKeyNames[e.KeyCode];//更新新键
+
+            e.Handled = true;//阻止事件传递
+        }
+
+        private void keyBindingGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+            //判断是否由程序更改
+            if (!is_user_changed) return;
+            is_user_changed = false;
+            if (keyBindingGrid.CurrentCell.ColumnIndex != 1) return;
+            String name = keyBindingGrid.CurrentRow.Cells[0].Value.ToString();
+            Action action = GridBinding[name];
+            var tmp = keyBinding.getKey(action);
+            Keys m;
+            switch (keyBindingGrid.CurrentCell.Value) {
+                case "Shift":
+                    m = Keys.Shift;
+                    break;
+                case "Ctrl":
+                    m = Keys.Control;
+                    break;
+                case "Alt":
+                    m = Keys.Alt;
+                    break;
+                default:
+                    m = Keys.None;
+                    break;
+            }
+            if (m == tmp.modifier) return;
+            string err = keyBinding.getError(keyBinding.registKeyFunction(m, tmp.key, action));
+        }
+
+        private void keyBindingGrid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            is_user_changed = true;
+        }
+
+        private void keyBindingGrid_CellMouseLeave(object sender, DataGridViewCellEventArgs e) {
+            if (!is_user_changed) return;
+            if (keyBindingGrid.CurrentCell.ColumnIndex != 1) return;
+            keyBindingGrid.EndEdit();
+            is_user_changed = false;
+        }
 
         private void button1_Click(object sender, EventArgs e) {
             new Form3().ShowDialog();
