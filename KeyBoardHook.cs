@@ -1,246 +1,146 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace depictPicture {
+namespace KeysBinding {
+    class KeyboardHook {
+        public event KeyEventHandler KeyDownEvent;
+        public event KeyPressEventHandler KeyPressEvent;
+        public event KeyEventHandler KeyUpEvent;
 
-
-    internal class KeysBinding {
-        public static readonly Dictionary<String, Keys> KeyNames = new Dictionary<string, Keys> {
-            {"None",0 },
-            {"LButton",Keys.LButton },
-            {"RButton",Keys.RButton },
-            {"Cancel",Keys.Cancel },
-            {"MButton",Keys.MButton },
-            {"XButton1",Keys.XButton1 },
-            {"XButton2",Keys.XButton2 },
-            {"Back",Keys.Back },
-            {"Tab",Keys.Tab },
-            {"LineFeed",Keys.LineFeed },
-            {"Clear",Keys.Clear },
-            {"Return",Keys.Return },
-            {"Enter",Keys.Enter },
-            {"ShiftKey",Keys.ShiftKey },
-            {"ControlKey",Keys.ControlKey },
-            {"Menu",Keys.Menu },
-            {"Pause",Keys.Pause },
-            {"Capital",Keys.Capital },
-            {"CapsLock",Keys.CapsLock },
-            {"KanaMode",Keys.KanaMode },
-            {"HanguelMode",Keys.HanguelMode },
-            {"HangulMode",Keys.HangulMode },
-            {"JunjaMode",Keys.JunjaMode },
-            {"FinalMode",Keys.FinalMode },
-            {"HanjaMode",Keys.HanjaMode },
-            {"KanjiMode",Keys.KanjiMode },
-            {"Escape",Keys.Escape },
-            {"IMEConvert",Keys.IMEConvert },
-            {"IMENonconvert",Keys.IMENonconvert },
-            {"IMEAccept",Keys.IMEAccept },
-            {"IMEAceept",Keys.IMEAceept },
-            {"IMEModeChange",Keys.IMEModeChange },
-            {"Space",Keys.Space },
-            {"Prior",Keys.Prior },
-            {"PageUp",Keys.PageUp },
-            {"Next",Keys.Next },
-            {"PageDown",Keys.PageDown },
-            {"End",Keys.End },
-            {"Home",Keys.Home },
-            {"Left",Keys.Left },
-            {"Up",Keys.Up },
-            {"Right",Keys.Right },
-            {"Down",Keys.Down },
-            {"Select",Keys.Select },
-            {"Print",Keys.Print },
-            {"Execute",Keys.Execute },
-            {"Snapshot",Keys.Snapshot },
-            {"PrintScreen",Keys.PrintScreen },
-            {"Insert",Keys.Insert },
-            {"Delete",Keys.Delete },
-            {"Help",Keys.Help },
-            {"D0",Keys.D0 },
-            {"D1",Keys.D1 },
-            {"D2",Keys.D2 },
-            {"D3",Keys.D3 },
-            {"D4",Keys.D4 },
-            {"D5",Keys.D5 },
-            {"D6",Keys.D6 },
-            {"D7",Keys.D7 },
-            {"D8",Keys.D8 },
-            {"D9",Keys.D9 },
-            {"A",Keys.A },
-            {"B",Keys.B },
-            {"C",Keys.C },
-            {"D",Keys.D },
-            {"E",Keys.E },
-            {"F",Keys.F },
-            {"G",Keys.G },
-            {"H",Keys.H },
-            {"I",Keys.I },
-            {"J",Keys.J },
-            {"K",Keys.K },
-            {"L",Keys.L },
-            {"M",Keys.M },
-            {"N",Keys.N },
-            {"O",Keys.O },
-            {"P",Keys.P },
-            {"Q",Keys.Q },
-            {"R",Keys.R },
-            {"S",Keys.S },
-            {"T",Keys.T },
-            {"U",Keys.U },
-            {"V",Keys.V },
-            {"W",Keys.W },
-            {"X",Keys.X },
-            {"Y",Keys.Y },
-            {"Z",Keys.Z },
-            {"LWin",Keys.LWin },
-            {"RWin",Keys.RWin },
-            {"Apps",Keys.Apps },
-            {"Sleep",Keys.Sleep },
-            {"NumPad0",Keys.NumPad0 },
-            {"NumPad1",Keys.NumPad1 },
-            {"NumPad2",Keys.NumPad2 },
-            {"NumPad3",Keys.NumPad3 },
-            {"NumPad4",Keys.NumPad4 },
-            {"NumPad5",Keys.NumPad5 },
-            {"NumPad6",Keys.NumPad6 },
-            {"NumPad7",Keys.NumPad7 },
-            {"NumPad8",Keys.NumPad8 },
-            {"NumPad9",Keys.NumPad9 },
-            {"Multiply",Keys.Multiply },
-            {"Add",Keys.Add },
-            {"Separator",Keys.Subtract},
-            {"Subtract",Keys.Subtract },
-            {"Decimal",Keys.Decimal },
-            {"Divide",Keys.Divide },
-            {"F1",Keys.F1 },
-            {"F2",Keys.F2 },
-            {"F3",Keys.F3 },
-            {"F4",Keys.F4 },
-            {"F5",Keys.F5 },
-            {"F6",Keys.F6 },
-            {"F7",Keys.F7 },
-            {"F8",Keys.F8 },
-            {"F9",Keys.F9 },
-            {"F10",Keys.F10 },
-            {"F11",Keys.F11 },
-            {"F12",Keys.F12 },
-            {"F13",Keys.F13 },
-            {"F14",Keys.F14 },
-            {"F15",Keys.F15 },
-            {"F16",Keys.F16 },
-            {"F17",Keys.F17 },
-            {"F18",Keys.F18 },
-            {"F19",Keys.F19 },
-            {"F20",Keys.F20 },
-            {"F21",Keys.F21 },
-            {"F22",Keys.F22 },
-            {"F23",Keys.F23 },
-            {"F24",Keys.F24 },
-            {"NumLock",Keys.NumLock },
-            {"Scroll",Keys.Scroll },
-            {"LShiftKey",Keys.LShiftKey },
-            {"RShiftKey",Keys.RShiftKey },
-            {"LControlKey",Keys.LControlKey },
-            {"RControlKey",Keys.RControlKey },
-            {"LMenu",Keys.LMenu },
-            {"RMenu",Keys.RMenu },
-            {"BrowserBack",Keys.BrowserBack },
-            {"BrowserForward",Keys.BrowserForward },
-            {"BrowserRefresh",Keys.BrowserRefresh },
-            {"BrowserStop",Keys.BrowserStop },
-            {"BrowserSearch",Keys.BrowserSearch },
-            {"BrowserFavorites",Keys.BrowserFavorites },
-            {"BrowserHome",Keys.BrowserHome },
-            {"VolumeMute",Keys.VolumeMute },
-            {"VolumeDown",Keys.VolumeDown },
-            {"VolumeUp",Keys.VolumeUp },
-            {"MediaNextTrack",Keys.MediaNextTrack },
-            {"MediaPreviousTrack",Keys.MediaPreviousTrack },
-            {"MediaStop",Keys.MediaStop },
-            {"MediaPlayPause",Keys.MediaPlayPause },
-            {"LaunchMail",Keys.LaunchMail },
-            {"SelectMedia",Keys.SelectMedia },
-            {"LaunchApplication1",Keys.LaunchApplication1 },
-            {"LaunchApplication2",Keys.LaunchApplication2 },
-            {"Oem1",Keys.Oem1 },
-            {"OemPlus",Keys.Oemplus },
-            {"OemComma",Keys.Oemcomma },
-            {"OemMinus",Keys.OemMinus },
-            {"OemPeriod",Keys.OemPeriod },
-            {"Oem2",Keys.Oem2 },
-            {"Oem3",Keys.Oem3 },
-            {"Oem4",Keys.Oem4 },
-            {"Oem5",Keys.Oem5 },
-            {"Oem6",Keys.Oem6 },
-            {"Oem7",Keys.Oem7 },
-            {"Oem8",Keys.Oem8 },
-            {"Oem102",Keys.Oem102 },
-            {"ProcessKey",Keys.ProcessKey },
-            {"Packet",Keys.Packet },
-            {"Attn",Keys.Attn },
-            {"CrSel",Keys.Crsel },
-            {"ExSel",Keys.Exsel },
-            {"EraseEof",Keys.EraseEof },
-            {"Play",Keys.Play },
-            {"Zoom",Keys.Zoom },
-            {"NoName",Keys.NoName },
-            {"Pa1",Keys.Pa1 },
-            {"OemClear",Keys.OemClear },
-            {"Shift",Keys.Shift },
-            {"Control",Keys.Control },
-            {"Alt",Keys.Alt }
-        };
-
-        public static readonly Dictionary<Keys, String> reverseKeyNames = KeyNames
-            .GroupBy(e => e.Value)
-            .ToDictionary(g => g.First().Value, g => g.First().Key);
-
-
-        //错误管理
-
-        private List<string> errorCode = new List<string> {
-            "主控键与副键相同",
-            "主控键错误(Ctrl,Alt,Shift)",
-            "副键错误",
-            "键组已注册",
-            "键组未注册",
-            "函数未注册"
-        };
-
-        public string getError(int err) {
-            if (err == 100) return "";
-            return errorCode[err];
+        public delegate int HookProc(int nCode, Int32 wParam, IntPtr lParam);
+        static int hKeyboardHook = 0; //声明键盘钩子处理的初始值
+        //值在Microsoft SDK的Winuser.h里查询
+        public const int WH_KEYBOARD_LL = 13;   //线程键盘钩子监听鼠标消息设为2，全局键盘监听鼠标消息设为13
+        HookProc KeyboardHookProcedure; //声明KeyboardHookProcedure作为HookProc类型
+        //键盘结构
+        [StructLayout(LayoutKind.Sequential)]
+        public class KeyboardHookStruct {
+            public int vkCode;  //定一个虚拟键码。该代码必须有一个价值的范围1至254
+            public int scanCode; // 指定的硬件扫描码的关键
+            public int flags;  // 键标志
+            public int time; // 指定的时间戳记的这个讯息
+            public int dwExtraInfo; // 指定额外信息相关的信息
         }
-        //注册键组
+        //使用此功能，安装了一个钩子
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern int SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
 
-        //  键组结构体
-        public struct KeyFunction {
-            public KeyFunction(Keys modifier, Keys key) {
-                this.modifier = modifier;
-                this.key = key;
+
+        //调用此函数卸载钩子
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern bool UnhookWindowsHookEx(int idHook);
+
+
+        //使用此功能，通过信息钩子继续下一个钩子
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern int CallNextHookEx(int idHook, int nCode, Int32 wParam, IntPtr lParam);
+
+        // 取得当前线程编号（线程钩子需要用到）
+        [DllImport("kernel32.dll")]
+        static extern int GetCurrentThreadId();
+
+        //使用WINDOWS API函数代替获取当前实例的函数,防止钩子失效
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetModuleHandle(string name);
+
+        public void Start() {
+            // 安装键盘钩子
+            if (hKeyboardHook == 0) {
+                KeyboardHookProcedure = new HookProc(KeyboardHookProc);
+                hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookProcedure, GetModuleHandle(System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName), 0);
+                //hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookProcedure, Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]), 0);
+                //************************************
+                //键盘线程钩子
+                SetWindowsHookEx(13, KeyboardHookProcedure, IntPtr.Zero, GetCurrentThreadId());//指定要监听的线程idGetCurrentThreadId(),
+                //键盘全局钩子,需要引用空间(using System.Reflection;)
+                //SetWindowsHookEx( 13,MouseHookProcedure,Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]),0);
+                //
+                //关于SetWindowsHookEx (int idHook, HookProc lpfn, IntPtr hInstance, int threadId)函数将钩子加入到钩子链表中，说明一下四个参数：
+                //idHook 钩子类型，即确定钩子监听何种消息，上面的代码中设为2，即监听键盘消息并且是线程钩子，如果是全局钩子监听键盘消息应设为13，
+                //线程钩子监听鼠标消息设为7，全局钩子监听鼠标消息设为14。lpfn 钩子子程的地址指针。如果dwThreadId参数为0 或是一个由别的进程创建的
+                //线程的标识，lpfn必须指向DLL中的钩子子程。 除此以外，lpfn可以指向当前进程的一段钩子子程代码。钩子函数的入口地址，当钩子钩到任何
+                //消息后便调用这个函数。hInstance应用程序实例的句柄。标识包含lpfn所指的子程的DLL。如果threadId 标识当前进程创建的一个线程，而且子
+                //程代码位于当前进程，hInstance必须为NULL。可以很简单的设定其为本应用程序的实例句柄。threaded 与安装的钩子子程相关联的线程的标识符
+                //如果为0，钩子子程与所有的线程关联，即为全局钩子
+                //************************************
+                //如果SetWindowsHookEx失败
+                if (hKeyboardHook == 0) {
+                    Stop();
+                    throw new Exception("安装键盘钩子失败");
+                }
             }
-            public Keys modifier;
-            public Keys key;
         }
-        //  函数-键组字典
-        private Dictionary<Action, KeyFunction> registedKeys = new Dictionary<Action, KeyFunction> { };
-        //  键组-函数字典（Ctrl, Alt, Shift，None）
-
-        private Dictionary<Keys, Dictionary<Keys, Action>> registedFunctions = new Dictionary<Keys, Dictionary<Keys, Action>> {
-            {Keys.Control,new Dictionary<Keys, Action>{ } },
-            {Keys.Alt,new Dictionary<Keys, Action>{ } },
-            {Keys.Shift,new Dictionary<Keys, Action>{ } },
-            {Keys.None,new Dictionary<Keys, Action>{ } },
-        };
-
-        //键组管理
+        public void Stop() {
+            bool retKeyboard = true;
 
 
-        public KeyFunction getKey(Action function) {
-            if (!registedKeys.ContainsKey(function)) {
-                return new KeyFunction(Keys.None, Keys.None);
+            if (hKeyboardHook != 0) {
+                retKeyboard = UnhookWindowsHookEx(hKeyboardHook);
+                hKeyboardHook = 0;
             }
-            return registedKeys[fu
+
+            if (!(retKeyboard)) throw new Exception("卸载钩子失败！");
+        }
+        //ToAscii职能的转换指定的虚拟键码和键盘状态的相应字符或字符
+        [DllImport("user32")]
+        public static extern int ToAscii(int uVirtKey, //[in] 指定虚拟关键代码进行翻译。
+                                         int uScanCode, // [in] 指定的硬件扫描码的关键须翻译成英文。高阶位的这个值设定的关键，如果是（不压）
+                                         byte[] lpbKeyState, // [in] 指针，以256字节数组，包含当前键盘的状态。每个元素（字节）的数组包含状态的一个关键。如果高阶位的字节是一套，关键是下跌（按下）。在低比特，如果设置表明，关键是对切换。在此功能，只有肘位的CAPS LOCK键是相关的。在切换状态的NUM个锁和滚动锁定键被忽略。
+                                         byte[] lpwTransKey, // [out] 指针的缓冲区收到翻译字符或字符。
+                                         int fuState); // [in] Specifies whether a menu is active. This parameter must be 1 if a menu is active, or 0 otherwise.
+
+        //获取按键的状态
+        [DllImport("user32")]
+        public static extern int GetKeyboardState(byte[] pbKeyState);
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        private static extern short GetKeyState(int vKey);
+
+        private const int WM_KEYDOWN = 0x100;//KEYDOWN
+        private const int WM_KEYUP = 0x101;//KEYUP
+        private const int WM_SYSKEYDOWN = 0x104;//SYSKEYDOWN
+        private const int WM_SYSKEYUP = 0x105;//SYSKEYUP
+
+        private int KeyboardHookProc(int nCode, Int32 wParam, IntPtr lParam) {
+            // 侦听键盘事件
+            if ((nCode >= 0) && (KeyDownEvent != null || KeyUpEvent != null || KeyPressEvent != null)) {
+                KeyboardHookStruct MyKeyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+                // raise KeyDown
+                if (KeyDownEvent != null && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
+                    Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
+                    KeyEventArgs e = new KeyEventArgs(keyData);
+                    KeyDownEvent(this, e);
+                }
+
+                //键盘按下
+                if (KeyPressEvent != null && wParam == WM_KEYDOWN) {
+                    byte[] keyState = new byte[256];
+                    GetKeyboardState(keyState);
+
+                    byte[] inBuffer = new byte[2];
+                    if (ToAscii(MyKeyboardHookStruct.vkCode, MyKeyboardHookStruct.scanCode, keyState, inBuffer, MyKeyboardHookStruct.flags) == 1) {
+                        KeyPressEventArgs e = new KeyPressEventArgs((char)inBuffer[0]);
+                        KeyPressEvent(this, e);
+                    }
+                }
+
+                // 键盘抬起
+                if (KeyUpEvent != null && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP)) {
+                    Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
+                    KeyEventArgs e = new KeyEventArgs(keyData);
+                    KeyUpEvent(this, e);
+                }
+
+            }
+            //如果返回1，则结束消息，这个消息到此为止，不再传递。
+            //如果返回0或调用CallNextHookEx函数则消息出了这个钩子继续往下传递，也就是传给消息真正的接受者
+            return CallNextHookEx(hKeyboardHook, nCode, wParam, lParam);
+        }
+        ~KeyboardHook() {
+            Stop();
+        }
+    }
+
+}
