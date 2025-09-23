@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace depictPicture {
+namespace KeysBinding {
 
 
     internal class KeysBinding {
@@ -246,14 +246,14 @@ namespace depictPicture {
             return registedKeys[function];
         }
 
-        public int registKeyFunction(Keys modifier, Keys key, Action function) {
+        public int registKeyFunction(Keys modifier, Keys key, Action function,bool Forced=false) {
             if (modifier == key) {
                 return 0;
-            } else if (!registedFunctions.ContainsKey(modifier)) {
+            } else if (!registedFunctions.ContainsKey(modifier) ) {
                 return 1;
             } else if (key != Keys.None && !reverseKeyNames.ContainsKey(key)) {
                 return 2;
-            } else if (registedFunctions[modifier].ContainsKey(key)) {
+            } else if (registedFunctions[modifier].ContainsKey(key) && !Forced) {
                 return 3;
             }
 
@@ -304,6 +304,7 @@ namespace depictPicture {
                 return false;
             }
             registedFunctions[modifier][key]();
+            //MessageBox.Show(modifier.ToString(),key.ToString());
             return true;
         }
     }

@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace depictPicture {
+namespace KeysBinding {
     class KeyboardHook {
         public event KeyEventHandler KeyDownEvent;
         public event KeyPressEventHandler KeyPressEvent;
