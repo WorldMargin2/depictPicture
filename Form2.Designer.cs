@@ -45,6 +45,7 @@
             this.ModifyKey = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.keyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button1 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.opacity_num)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -188,6 +189,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.checkBox1);
             this.tabPage1.Controls.Add(this.show_window);
             this.tabPage1.Controls.Add(this.drag_window);
             this.tabPage1.Controls.Add(this.mouse_penetrate);
@@ -272,6 +274,18 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(117, 31);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(125, 19);
+            this.checkBox1.TabIndex = 4;
+            this.checkBox1.Text = "启用配置文件";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -323,5 +337,6 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn ModifyKey;
         private System.Windows.Forms.DataGridViewTextBoxColumn keyColumn;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

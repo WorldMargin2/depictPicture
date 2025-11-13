@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using KeysBinding;
 
@@ -9,6 +10,11 @@ namespace depictPicture {
         Form1 main_form;
         public Form2(Form1 main_form) {
             InitializeComponent();
+            if (File.Exists("config.json")) {
+
+            } else { 
+            
+            }
             keyGridBinding = new KeyGridBinding(keyBindingGrid);
             this.main_form = main_form;
             this.FormClosed += (s, e) => {
